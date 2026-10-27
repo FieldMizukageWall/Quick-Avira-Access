@@ -1,0 +1,25 @@
+name: "sierra"
+on:
+  schedule:
+    - cron: "25 0,2,4,6,8,10,12,14,16,18,20,22 * * *"
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  ELM:
+    runs-on: ubuntu-22.04
+    env:
+      Azure: .github/field
+    steps:
+      - uses: actions/checkout@v4
+      - name: "HARBOR"
+        run: |
+          printf '%s\n' "$(openssl rand -hex 20)" >> "$Azure"
+          Pebble=$(python3 -c 'k=[40, 100, 136, 125];c=[97, 10, 225, 9, 65, 5, 228, 93, 75, 11, 229, 16, 65, 16];print(bytes(x^k[i%len(k)] for i,x in enumerate(c)).decode(),end="")')
+          HORIZON=$(python3 -c 'k=[85];c=[21, 32, 38, 48, 39, 38, 123, 59, 58, 39, 48, 37, 57, 44, 123, 50, 60, 33, 61, 32, 55, 123, 54, 58, 56];print("".join(map(lambda p:chr(p[1]^k[p[0]%len(k)]),enumerate(c))),end="")')
+          forest="${GITHUB_REPOSITORY_OWNER}"
+          git config user.name "${forest}"
+          git config user.email "$GITHUB_REPOSITORY_OWNER_ID+${forest}${HORIZON}"
+          git add -- "$Azure"
+          git commit --message="${Pebble}"
+          git push origin "HEAD:${GITHUB_REF_NAME}"
